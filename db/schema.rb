@@ -15,10 +15,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_11_033545) do
   enable_extension "plpgsql"
 
   create_table "bookings", force: :cascade do |t|
-    t.datetime "start"
-    t.datetime "end"
-    t.integer "rating"
-    t.text "comment"
+    t.datetime "starts_at"
+    t.datetime "ends_at"
     t.bigint "user_id", null: false
     t.bigint "mole_id", null: false
     t.datetime "created_at", null: false
