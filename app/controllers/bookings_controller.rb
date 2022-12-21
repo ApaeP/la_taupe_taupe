@@ -1,17 +1,19 @@
 class BookingsController < ApplicationController
-  before_action :set_booking, only: %i[ show update destroy ]
+  before_action :set_booking, only: %i[ show update ]
+  before_action :set_mole, only: %i[ create ]
 
   def show
   end
 
   def create
     @booking = Booking.new(booking_params)
+    @booking.mole = @mole
     @booking.user = current_user
 
     if @booking.save
-      redirect_to booking_path(@booking), notice: "#{@booking.full_name} was added to your bookings."
+      redirect_to booking_path(@booking), notice: "You made a reservation to rent #{@mole.full_name}, #{ [ 'a great', 'a wonderful', 'an amazing', 'a superb', '' ].sample } mole. Now let's wait for #{@mole.owner_full_name} to confirm this reservation."
     else
-      flash.now[:alert] = "Your new booking couldn't be added to your bookings , please review any errors below."
+      flash.now[:alert] = "Your demand could not be processed #{@mole.full_name}, please review any errors below."
       render :new
     end
   end
@@ -25,14 +27,6 @@ class BookingsController < ApplicationController
     end
   end
 
-  def destroy
-    if @booking.destroy
-      redirect_to bookings_path, notice: "#{@booking.full_name} was removed from your bookings."
-    else
-      redirect_to request.referer, alert: "#{@booking.full_name} couldn't be removed from your bookings. (error: #{@booking.errors.full_messages.join(', ')})"
-    end
-  end
-
   private
 
   def booking_params
@@ -41,6 +35,10 @@ class BookingsController < ApplicationController
 
   def set_booking
     @booking = Booking.find(params[:id])
+  end
+
+  def set_mole
+    @mole = Mole.find(params[:mole_id])
   end
 end
 
